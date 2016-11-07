@@ -73,10 +73,18 @@ object DefaultValueMatcher {
             case _ => throw new Exception(s"Invalid default value for field: $field, value: $node")
           }
 
-          val fieldValues = fields.map { f =>
-            fromJsonNode(jsObject.get(f.name), f.schema)
-          }
-          NEW(schema.getName, fieldValues: _*)
+          val defaultValues = fields.map(x => (x.name, fromJsonNode(x.defaultValue, x.schema)))
+          val fieldValues = fields.map { f => (f.name, fromJsonNode(jsObject.get(f.name), f.schema))}.filter(!_._2.isEmpty)
+
+          val values = (defaultValues.toMap ++ fieldValues.toMap)
+            .map(e => {
+              if (e._2.isEmpty) {
+                throw new Exception("Some values for non-default fields not provided")
+              } else e
+            })
+
+          val output = defaultValues.map(x => values(x._1))
+          NEW(schema.getName, output: _*)
         }
         case x => throw new Exception("Can't extract a default field, type not yet supported: " + x)
       }

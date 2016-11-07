@@ -1,0 +1,16 @@
+@namespace("default.values.test")
+protocol DefaultValues {
+
+    record MetaEvent {
+        string atype = "aType";
+        string service = "df";
+        union { null, string } service_timezone = null;
+        string btype = "cvb";
+    }
+
+    record Visit {
+        MetaEvent first_meta_event = {"atype": "tyu"};
+        MetaEvent second_meta_event = {};
+        MetaEvent last_meta_event = { "atype": "asd", "btype": "345f"};
+    }
+}

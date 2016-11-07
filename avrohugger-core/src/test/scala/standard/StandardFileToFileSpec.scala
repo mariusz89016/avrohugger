@@ -223,5 +223,23 @@ class StandardFileToFileSpec extends mutable.Specification {
       adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/example/idl/Defaults.scala")
     }
 
+    "17. correctly generate default values for records" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/DefaultValues.avdl")
+      val gen = new Generator(Standard)
+      val outDit = gen.defaultOutputDir + "/standard/"
+      gen.fileToFile(infile, outDit)
+
+      val adt = util.Util.readFile("target/generated-sources/standard/default/values/test/DefaultValues.scala")
+
+      adt === util.Util.readFile("avrohugger-core/src/test/expected/standard/default/values/test/DefaultValues.scala")
+    }
+
+    "18. throw an exception when non all required values are provided" in {
+      val infile = new java.io.File("avrohugger-core/src/test/avro/DefaultValuesIncorrect.avdl")
+      val gen = new Generator(Standard)
+      val outDit = gen.defaultOutputDir + "/standard/"
+
+      gen.fileToFile(infile, outDit) must throwAn[Exception]
+    }
   }
 }
